@@ -23,6 +23,8 @@ export default class Button extends PureComponent {
     disableAnimationDuration: 225,
 
     disabled: false,
+
+    useNativeDriver: false,
   };
 
   static propTypes = {
@@ -40,6 +42,8 @@ export default class Button extends PureComponent {
 
     disableAnimation: PropTypes.instanceOf(Animated.Value),
     disableAnimationDuration: PropTypes.number,
+
+    useNativeDriver: PropTypes.bool,
 
     payload: PropTypes.any,
   };
@@ -67,11 +71,15 @@ export default class Button extends PureComponent {
     let { disabled } = this.props;
 
     if (disabled ^ prevProps.disabled) {
-      let { disableAnimationDuration: duration } = this.props;
+      let { disableAnimationDuration: duration, useNativeDriver } = this.props;
       let { disableAnimation } = this.state;
 
       Animated
-        .timing(disableAnimation, { toValue: disabled? 1 : 0, duration })
+        .timing(disableAnimation, { 
+          toValue: disabled? 1 : 0, 
+          duration, 
+          useNativeDriver 
+        })
         .start();
     }
   }
@@ -86,13 +94,14 @@ export default class Button extends PureComponent {
 
   onFocusChange(focused) {
     let { focusAnimation } = this.state;
-    let { focusAnimationDuration } = this.props;
+    let { focusAnimationDuration, useNativeDriver } = this.props;
 
     Animated
       .timing(focusAnimation, {
         toValue: focused? 1 : 0,
         duration: focusAnimationDuration,
         easing: Easing.out(Easing.ease),
+        useNativeDriver,
       })
       .start();
   }
@@ -132,7 +141,7 @@ export default class Button extends PureComponent {
     return (
       <Ripple
         {...props}
-
+        
         style={[ styles.container, rippleStyle, style ]}
         onPress={this.onPress}
         onPressIn={this.onPressIn}
